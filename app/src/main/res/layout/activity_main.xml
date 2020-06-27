@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--登录界面,用LinearLayout-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <!--导航栏-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_marginTop="70dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/tv_back"
+            android:layout_alignParentLeft="true"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/app_icon" />
+        <Button
+            android:id="@+id/about"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="70sp"
+            android:background="@android:color/transparent"
+            android:text="About Us"
+            android:textSize="27dp"
+            android:textColor="#494852" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <!--标题栏-->
+        <LinearLayout
+            android:id="@+id/header_box"
+            android:layout_width="600dp"
+            android:layout_height="330dp"
+            android:layout_marginTop="80dp"
+            android:layout_marginLeft="130dp"
+            android:layout_marginRight="300dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+            <!-- 医测通 Covid-19 solution -->
+            <TextView
+                android:id="@+id/covid_app"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.3"
+                android:padding="8dp"
+                android:text="医测通 Covid-19 solution"
+                android:textColor="#494852"
+                android:textSize="50sp" />
+
+            <TextView
+                android:id="@+id/covid_app_description"
+                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_weight="0.5"
+                android:padding="8dp"
+                android:text="Medical end automatic information recording system"
+                android:textColor="#494852"
+                android:textSize="38sp" />
+
+            <Button
+                android:id="@+id/btn_login"
+                android:layout_width="fill_parent"
+                android:layout_height="45dp"
+                android:layout_weight="0.01"
+                android:layout_marginLeft="150dp"
+                android:layout_marginRight="320dp"
+                android:background="#59BAB2"
+                android:text="登 录"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"/>
+
+        </LinearLayout>
+
+        <!--按钮-->
+        <ImageView
+            android:layout_width="820dp"
+            android:layout_height="620dp"
+            android:layout_marginLeft="460dp"
+            android:src="@drawable/default_icon" />
+    </RelativeLayout>
+</LinearLayout>
