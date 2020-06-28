@@ -5,16 +5,24 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.gonine.R;
 import com.example.gonine.utils.MD5Utils;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity {
     //标题
@@ -28,14 +36,27 @@ public class LoginActivity extends AppCompatActivity {
     //用户名和密码的输入框
     private EditText et_user_name,et_psw;
 
+
+    // for firebase auth
+    FirebaseAuth auth;
+
+    // for logging
+    private static final String TAG = "LoginActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         //设置此界面为？屏
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+        auth = FirebaseAuth.getInstance();
+
         init();
     }
+
+
+
     //获取界面控件
     private void init() {
         //从main_title_bar中获取的id
@@ -60,12 +81,7 @@ public class LoginActivity extends AppCompatActivity {
                 //开始登录，获取用户名和密码 getText().toString().trim();
                 userName=et_user_name.getText().toString().trim();
                 psw=et_psw.getText().toString().trim();
-                //对当前用户输入的密码进行MD5加密再进行比对判断, MD5Utils.md5( ); psw 进行加密判断是否一致
-                String md5Psw= MD5Utils.md5(psw);
-                // md5Psw ; spPsw 为 根据从SharedPreferences中用户名读取密码
-                // 定义方法 readPsw为了读取用户名，得到密码
-                spPsw=readPsw(userName);
-                // TextUtils.isEmpty
+
                 if(TextUtils.isEmpty(userName)){
                     Toast.makeText(LoginActivity.this, "请输入用户名", Toast.LENGTH_SHORT).show();
                     return;
@@ -73,59 +89,34 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "请输入密码", Toast.LENGTH_SHORT).show();
                     return;
                     // md5Psw.equals(); 判断，输入的密码加密后，是否与保存在SharedPreferences中一致
-                }else if(md5Psw.equals(spPsw)){
-                    //一致登录成功
-                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-                    //保存登录状态，在界面保存登录的用户名 定义个方法 saveLoginStatus boolean 状态 , userName 用户名;
-                    saveLoginStatus(true, userName);
-                    //登录成功后关闭此页面进入主页
-                    Intent data=new Intent();
-                    //datad.putExtra( ); name , value ;
-                    data.putExtra("isLogin",true);
-                    data.putExtra("userName",userName);
-                    //RESULT_OK为Activity系统常量，状态码为-1
-                    // 表示此页面下的内容操作成功将data返回到上一页面，如果是用back返回过去的则不存在用setResult传递data值
-                    setResult(RESULT_OK,data);
-                    //销毁登录界面
-                    LoginActivity.this.finish();
-                    //跳转到主界面，登录成功的状态传递到 MainActivity 中
-                    //startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    return;
-                }else if((spPsw!=null&&!TextUtils.isEmpty(spPsw)&&!md5Psw.equals(spPsw))){
-                    Toast.makeText(LoginActivity.this, "输入的用户名和密码不一致", Toast.LENGTH_SHORT).show();
-                    return;
-                }else{
-                    Toast.makeText(LoginActivity.this, "此用户名不存在", Toast.LENGTH_SHORT).show();
                 }
+
+                auth.signInWithEmailAndPassword(userName, psw)
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    // Sign in success, update UI with the signed-in user's information
+                                    Log.d(TAG, "signInWithEmail:success");
+                                    Toast.makeText(LoginActivity.this, "Authentication succeed.",
+                                            Toast.LENGTH_SHORT).show();
+
+                                    FirebaseUser user = auth.getCurrentUser();
+                                    updateUI(user);
+                                } else {
+                                    // If sign in fails, display a message to the user.
+                                    Log.w(TAG, "signInWithEmail:failure", task.getException());
+                                    Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                            Toast.LENGTH_SHORT).show();
+                                    updateUI(null);
+                                }
+
+                            }
+                        });
             }
         });
     }
-    /**
-     *从SharedPreferences中根据用户名读取密码
-     */
-    private String readPsw(String userName){
-        //getSharedPreferences("loginInfo",MODE_PRIVATE);
-        //"loginInfo",mode_private; MODE_PRIVATE表示可以继续写入
-        SharedPreferences sp=getSharedPreferences("loginInfo", MODE_PRIVATE);
-        //sp.getString() userName, "";
-        return sp.getString(userName , "");
-    }
-    /**
-     *保存登录状态和登录用户名到SharedPreferences中
-     */
-    private void saveLoginStatus(boolean status,String userName){
-        //saveLoginStatus(true, userName);
-        //loginInfo表示文件名  SharedPreferences sp=getSharedPreferences("loginInfo", MODE_PRIVATE);
-        SharedPreferences sp=getSharedPreferences("loginInfo", MODE_PRIVATE);
-        //获取编辑器
-        SharedPreferences.Editor editor=sp.edit();
-        //存入boolean类型的登录状态
-        editor.putBoolean("isLogin", status);
-        //存入登录状态时的用户名
-        editor.putString("loginUserName", userName);
-        //提交修改
-        editor.commit();
-    }
+
     /**
      * 注册成功的数据返回至此
      * @param requestCode 请求码
@@ -152,4 +143,28 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
+
+    private void updateUI(FirebaseUser user) {
+        // TODO: show corresponding UI for user
+        if(user != null){
+            Intent data=new Intent();
+            //datad.putExtra( ); name , value ;
+            data.putExtra("isLogin",true);
+            data.putExtra("userName",userName);
+            //RESULT_OK为Activity系统常量，状态码为-1
+            // 表示此页面下的内容操作成功将data返回到上一页面，如果是用back返回过去的则不存在用setResult传递data值
+            setResult(RESULT_OK,data);
+            //销毁登录界面
+            LoginActivity.this.finish();
+            //跳转到主界面，登录成功的状态传递到 MainActivity 中
+            // TODO: update here
+            //startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        }
+        else{
+            // return to main activity
+            LoginActivity.this.finish();
+        }
+    }
+
+
 }

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "566314711753",
+    "firebase_url": "https://gonine-cffc4.firebaseio.com",
+    "project_id": "gonine-cffc4",
+    "storage_bucket": "gonine-cffc4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:566314711753:android:87cd1daa32c997c4e02b18",
+        "android_client_info": {
+          "package_name": "com.example.gonine"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "566314711753-if71c58dnrfhc6mop18govsa9rr368b9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJ1Dtal1ndhNNtGiX-7Qq6DTV7bxw1loY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "566314711753-if71c58dnrfhc6mop18govsa9rr368b9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

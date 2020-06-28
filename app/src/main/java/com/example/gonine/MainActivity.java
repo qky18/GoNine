@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.gonine.activity.LoginActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
     //返回按钮
@@ -16,11 +18,18 @@ public class MainActivity extends AppCompatActivity {
     //登录按钮
     private Button btn_login;
 
+    // add for firebase
+    private FirebaseFirestore mFirestore;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+        // Enable Firestore logging
+        FirebaseFirestore.setLoggingEnabled(true);
+        initFirestore();
         init();
     }
 
@@ -30,6 +39,11 @@ public class MainActivity extends AppCompatActivity {
         //从activity_main.xml 页面中获取对应的UI控件
         tv_back=findViewById(R.id.tv_back);
         btn_login = findViewById(R.id.btn_login);
+
+        if(FirebaseAuth.getInstance().getCurrentUser() == null){
+            // TODO: just go to content
+        }
+
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -37,5 +51,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, 1);
             }
         });
+    }
+
+    private void initFirestore() {
+        mFirestore = FirebaseFirestore.getInstance();
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+
     }
 }
