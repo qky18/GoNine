@@ -1,2 +1,3 @@
 rootProject.name='GoNine'
 include ':app'
+project(':hellocharts-library').projectDir = new File(rootDir, 'lib/hellocharts-library/')
