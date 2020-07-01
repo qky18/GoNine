@@ -89,26 +89,17 @@ public class DoctorActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 //TODO: submit query text & go to next page
-                Log.e("CSDN_LQR", "TextSubmit : " + s);
+                Log.e("Debug", "TextSubmit : " + s);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
                 //TODO: show search hint
-                Log.e("CSDN_LQR", "TextChange --> " + s);
+                Log.e("Debug", "TextChange --> " + s);
                 return false;
             }
         });
-        //切换软键盘
-        mRecyclerView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-            }
-        });
-
     }
 
 }
