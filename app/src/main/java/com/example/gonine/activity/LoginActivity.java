@@ -1,7 +1,6 @@
 package com.example.gonine.activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -16,26 +15,23 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.gonine.R;
-import com.example.gonine.utils.MD5Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity {
     //标题
     private TextView tv_main_title;
     //返回键,显示的注册，找回密码
-    private TextView tv_back,tv_register,tv_find_psw;
+    private TextView tv_back;
     //登录按钮
     private Button btn_login;
     //获取的用户名，密码，加密密码
-    private String userName,psw,spPsw;
+    private String userName,psw;
     //用户名和密码的输入框
     private EditText et_user_name,et_psw;
-
 
     // for firebase auth
     FirebaseAuth auth;
@@ -47,15 +43,13 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        //设置此界面为？屏
+
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         auth = FirebaseAuth.getInstance();
 
         init();
     }
-
-
 
     //获取界面控件
     private void init() {
@@ -88,7 +82,6 @@ public class LoginActivity extends AppCompatActivity {
                 }else if(TextUtils.isEmpty(psw)){
                     Toast.makeText(LoginActivity.this, "请输入密码", Toast.LENGTH_SHORT).show();
                     return;
-                    // md5Psw.equals(); 判断，输入的密码加密后，是否与保存在SharedPreferences中一致
                 }
 
                 auth.signInWithEmailAndPassword(userName, psw)
@@ -157,8 +150,8 @@ public class LoginActivity extends AppCompatActivity {
             //销毁登录界面
             LoginActivity.this.finish();
             //跳转到主界面，登录成功的状态传递到 MainActivity 中
-            // TODO: update here
-            //startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            // TODO(done): update here
+            startActivity(new Intent(LoginActivity.this, DoctorActivity.class));
         }
         else{
             // return to main activity

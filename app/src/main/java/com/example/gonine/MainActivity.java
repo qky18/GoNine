@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.gonine.activity.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -25,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         // Enable Firestore logging
         FirebaseFirestore.setLoggingEnabled(true);
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         //布局根元素（已删除）
         //从activity_main.xml 页面中获取对应的UI控件
         tv_back=findViewById(R.id.tv_back);
-        btn_login = findViewById(R.id.btn_login);
+        btn_login=findViewById(R.id.btn_login);
 
         if(FirebaseAuth.getInstance().getCurrentUser() == null){
             // TODO: just go to content
@@ -60,6 +61,5 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart(){
         super.onStart();
-
     }
 }

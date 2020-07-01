@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+    <!-- TODO: add doctor activity based on firebase -->
+    <!--tools:context="com.example.gonine.acitivity.DoctorActivity"-->
+
+    <!-- ToolBar -->
+    <include
+        android:id="@+id/title_bar"
+        layout="@layout/main_title_bar" />
+
+    <LinearLayout
+        android:id="@+id/btn_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/title_bar"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:orientation="vertical">
+        <ImageButton
+            android:id="@+id/btn_add_patient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:src="@drawable/app_add_patient"/>
+        <ImageButton
+            android:id="@+id/btn_go_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:src="@drawable/app_go_back"/>
+        <ImageButton
+            android:id="@+id/btn_show_patient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:src="@drawable/app_show_patient"/>
+    </LinearLayout>
+
+    <!-- Patient Filter -->
+    <LinearLayout
+        android:id="@+id/btn_horizontal"
+        android:layout_toRightOf="@+id/btn_vertical"
+        android:layout_below="@+id/title_bar"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageButton
+            android:id="@+id/btn_crucial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:src="@drawable/filter_crucial"/>
+        <ImageButton
+            android:id="@+id/btn_minor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/filter_minor"/>
+        <ImageButton
+            android:id="@+id/btn_special"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/filter_special"/>
+    </LinearLayout>
+
+    <!-- Main Patients recycler -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_patients"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/btn_horizontal"
+        android:layout_toRightOf="@+id/btn_vertical"
+        android:background="@android:color/white"
+        tools:listitem="@layout/item_patient"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="4" />
+
+</RelativeLayout>
