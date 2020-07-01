@@ -6,4 +6,6 @@ public class UserBean {
     public String sex;//性别
     public String signature;//签名
     public String qq;//qq
+
+
 }

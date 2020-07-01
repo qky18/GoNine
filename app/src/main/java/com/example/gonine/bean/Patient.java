@@ -3,6 +3,8 @@ package com.example.gonine.bean;
 
 import java.util.Vector;
 
+import lecho.lib.hellocharts.view.LineChartView;
+
 public class Patient {
     private int ID ;
     private String name ;
@@ -119,6 +121,53 @@ public class Patient {
     }
     public void clear_data(){
         this.data.clear() ;
+    }
+
+    private void update(){
+        //TODO for firebase:同步数据，可以直接使用medicalItem的update接口，display已经自带更新
+        for(int i = 1; i < data.size(); i++){
+            MedicalDataItem temp = (MedicalDataItem)data.toArray()[i] ;
+            temp.update();
+        }
+    }
+
+
+    public void chartinit_all(LineChartView lcv_heart,LineChartView lcv_heart2,LineChartView lcv_breath, LineChartView lcv_blood){//display自带更新
+        for(int i = 0; i < data.size(); i++){
+            MedicalDataItem temp = (MedicalDataItem)data.toArray()[i] ;
+            if(temp.getName() == "heartwave1" ){
+                temp.chartinit(lcv_heart);
+            }
+            else if(temp.getName() == "heartwave2"){
+                temp.chartinit(lcv_heart2);
+            }
+            else if(temp.getName() == "breathe"){
+                temp.chartinit(lcv_breath);
+            }
+            else if(temp.getName() == "blood"){
+                temp.chartinit(lcv_blood);
+            }
+            else continue ;
+        }
+    }
+
+    public void display_all(LineChartView lcv_heart,LineChartView lcv_heart2,LineChartView lcv_breath, LineChartView lcv_blood){//display自带更新
+        for(int i = 0; i < data.size(); i++){
+            MedicalDataItem temp = (MedicalDataItem)data.toArray()[i] ;
+            if(temp.getName() == "heartwave1" ){
+                temp.display(lcv_heart);
+            }
+            else if(temp.getName() == "heartwave2"){
+                temp.display(lcv_heart2);
+            }
+            else if(temp.getName() == "breathe"){
+                temp.display(lcv_breath);
+            }
+            else if(temp.getName() == "blood"){
+                temp.display(lcv_blood);
+            }
+            else continue ;
+        }
     }
 }
 
