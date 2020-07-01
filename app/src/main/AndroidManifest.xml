@@ -19,6 +19,8 @@
         <!--添加实现类-->
         <activity android:name=".activity.LoginActivity"></activity>
         <activity android:name=".activity.DoctorActivity"></activity>
+        <activity android:name=".activity.PatientViewActivity"></activity>
+        <activity android:name=".activity.PatientSpeechActivity"></activity>
     </application>
 
 </manifest>
