@@ -8,23 +8,20 @@ import lecho.lib.hellocharts.view.LineChartView;
 public class Patient {
     private int ID ;
     private String name ;
-    private Gender gender ;
-    private Severity severity ;
-    private String photo_path  ;
-    private Vector<DoctorAdvice> advices;
+    private String gender ;
+    private String severity ;
+    private int photoID  ;
+    private Vector<DoctorAdvice> advices ;
     private Vector<MedicalDataItem> data ;
     private int age ;
 
-    public Patient(int i,String n,Gender g, Severity s, String p, Vector<DoctorAdvice> da, Vector<MedicalDataItem> md,int a){
+    public Patient(int i, String n, String g, String s, int p, int a){
         this.ID = i ;
         this.name = n ;
         this.gender = g ;
         this.severity = s ;
-        this.photo_path = p ;
-        this.advices = da ;
-        this.data = md ;
+        this.photoID = p ;
         this.age = a ;
-
     }
 
     public int getID() {
@@ -35,16 +32,16 @@ public class Patient {
         return name;
     }
 
-    public Gender getGender() {
+    public String getGender() {
         return gender;
     }
 
-    public Severity getSeverity() {
+    public String getSeverity() {
         return severity;
     }
 
-    public String getPhoto_path() {
-        return photo_path;
+    public int getPhotoResID() {
+        return photoID;
     }
 
     public Vector<DoctorAdvice> getDoctor_advices() {
@@ -63,7 +60,7 @@ public class Patient {
         this.ID = ID;
     }
 
-    public void setGender(Gender gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
@@ -71,12 +68,12 @@ public class Patient {
         this.name = name;
     }
 
-    public void setSeverity(Severity severity) {
+    public void setSeverity(String severity) {
         this.severity = severity;
     }
 
-    public void setPhoto_path(String photo_path) {
-        this.photo_path = photo_path;
+    public void setPhotoResID(int photoResID) {
+        this.photoID = photoResID;
     }
 
     public void setAdvices(Vector<DoctorAdvice> advices) {
@@ -90,7 +87,6 @@ public class Patient {
     public void setAge(int age) {
         this.age = age;
     }
-
 
     public void add_advices(DoctorAdvice da){
         this.advices.add(da) ;
@@ -125,7 +121,7 @@ public class Patient {
 
     private void update(){
         //TODO for firebase:同步数据，可以直接使用medicalItem的update接口，display已经自带更新
-        for(int i = 1; i < data.size(); i++){
+        for(int i = 0; i < data.size(); i++){
             MedicalDataItem temp = (MedicalDataItem)data.toArray()[i] ;
             temp.update();
         }

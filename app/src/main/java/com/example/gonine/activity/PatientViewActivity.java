@@ -225,7 +225,9 @@ public class PatientViewActivity extends AppCompatActivity {
 
         use.add(heartwave1) ;
         use.add(breathe) ;
-        this.p = new Patient(1,"name", Gender.MALE, Severity.A,"p",null,use,0) ;
+        this.p = new Patient(1,"name", "male", "serious",0,0) ;
+        this.p.setAdvices(null);
+        this.p.setData(use);
     }
 
 /*
