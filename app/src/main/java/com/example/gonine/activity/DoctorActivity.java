@@ -1,27 +1,36 @@
 package com.example.gonine.activity;
 
-import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gonine.R;
+import com.example.gonine.adapter.DoctorAdapter;
+import com.example.gonine.bean.Patient;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DoctorActivity extends AppCompatActivity {
+    // toolbar
     private Toolbar mToolbar;
     private SearchView mSearchView;
-    private RecyclerView mRecyclerView;
+
+    // recycler view for patients
+    private RecyclerView mPatientsRecycler;
+    private DoctorAdapter mAdapter;
 
     // for firebase auth
     FirebaseAuth auth;
@@ -39,6 +48,7 @@ public class DoctorActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         init();
+        initRecyclerView();
     }
 
 
@@ -47,7 +57,7 @@ public class DoctorActivity extends AppCompatActivity {
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar); //使活动支持ToolBar
         mSearchView = findViewById(R.id.search_view);
-        mRecyclerView = findViewById(R.id.recycler_patients);
+        mPatientsRecycler = findViewById(R.id.recycler_patients);
         /*------------------ SearchView有三种默认展开搜索框的设置方式，区别如下： ------------------*/
         //设置搜索框直接展开显示。左侧有放大镜(在搜索框中) 右侧有叉叉 可以关闭搜索框
         mSearchView.setIconified(false);
@@ -102,4 +112,16 @@ public class DoctorActivity extends AppCompatActivity {
         });
     }
 
+    private void initRecyclerView() {
+
+        List<Patient> patientList = new ArrayList<>();
+        for (int i = 0; i < 12; i++){
+            int resourceId = R.mipmap.doctor;
+            // id, name, gender, severity, photo, age
+            patientList.add(new Patient(i, "003 Yefren Lee", "Female", "serious", resourceId, 40));
+        }
+
+        mAdapter = new DoctorAdapter(patientList);
+        mPatientsRecycler.setAdapter(mAdapter);
+    }
 }
