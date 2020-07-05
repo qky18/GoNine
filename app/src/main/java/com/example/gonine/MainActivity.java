@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.gonine.activity.LoginActivity;
+import com.example.gonine.activity.PatientSpeechActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         // Enable Firestore logging
         FirebaseFirestore.setLoggingEnabled(true);
@@ -48,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(MainActivity.this, LoginActivity.class);
+                //Intent intent=new Intent(MainActivity.this, LoginActivity.class);
+                Intent intent=new Intent(MainActivity.this, PatientSpeechActivity.class);
                 startActivityForResult(intent, 1);
             }
         });
