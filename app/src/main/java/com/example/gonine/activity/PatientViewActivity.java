@@ -21,6 +21,7 @@ import com.example.gonine.bean.Patient;
 import com.example.gonine.bean.Severity;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,6 +78,9 @@ public class PatientViewActivity extends AppCompatActivity {
     //封装好的display
     private MedicalDataItem medicalDataItem ;
 
+    // TODO: 通过Intent传入patientId来初始化patientRef
+    private DocumentReference patientRef;
+    // TODO: 使用patientRef来获得patient
     private Patient p ;
 
     @Override
@@ -225,7 +229,7 @@ public class PatientViewActivity extends AppCompatActivity {
 
         use.add(heartwave1) ;
         use.add(breathe) ;
-        this.p = new Patient(1,"name", "male", "serious",0,0) ;
+        this.p = new Patient(1,"name", "male", Severity.SEVERE,0,0) ;
         this.p.setAdvices(null);
         this.p.setData(use);
     }

@@ -150,7 +150,6 @@ public class LoginActivity extends AppCompatActivity {
             //销毁登录界面
             LoginActivity.this.finish();
             //跳转到主界面，登录成功的状态传递到 MainActivity 中
-            // TODO(done): update here
             startActivity(new Intent(LoginActivity.this, DoctorActivity.class));
         }
         else{

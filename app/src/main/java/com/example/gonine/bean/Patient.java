@@ -5,17 +5,25 @@ import java.util.Vector;
 
 import lecho.lib.hellocharts.view.LineChartView;
 
+import com.google.firebase.firestore.IgnoreExtraProperties;
+
+@IgnoreExtraProperties
 public class Patient {
     private int ID ;
     private String name ;
     private String gender ;
-    private String severity ;
+    private Severity severity ;
     private int photoID  ;
     private Vector<DoctorAdvice> advices ;
     private Vector<MedicalDataItem> data ;
     private int age ;
 
-    public Patient(int i, String n, String g, String s, int p, int a){
+    private Vector<NoteItem> diagnosis;
+    private Vector<NoteItem> doctor_advices;
+
+    public Patient(){}
+
+    public Patient(int i, String n, String g, Severity s, int p, int a){
         this.ID = i ;
         this.name = n ;
         this.gender = g ;
@@ -36,7 +44,7 @@ public class Patient {
         return gender;
     }
 
-    public String getSeverity() {
+    public Severity getSeverity() {
         return severity;
     }
 
@@ -68,7 +76,7 @@ public class Patient {
         this.name = name;
     }
 
-    public void setSeverity(String severity) {
+    public void setSeverity(Severity severity) {
         this.severity = severity;
     }
 
@@ -126,6 +134,7 @@ public class Patient {
             temp.update();
         }
     }
+
 
 
     public void chartinit_all(LineChartView lcv_heart,LineChartView lcv_heart2,LineChartView lcv_breath, LineChartView lcv_blood){//display自带更新

@@ -5,20 +5,26 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gonine.R;
 import com.example.gonine.adapter.DoctorAdapter;
 import com.example.gonine.bean.Patient;
+import com.example.gonine.bean.Severity;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +38,12 @@ public class DoctorActivity extends AppCompatActivity {
     private RecyclerView mPatientsRecycler;
     private DoctorAdapter mAdapter;
 
+    // buttons
+    private ImageButton addPatient;
+
     // for firebase auth
     FirebaseAuth auth;
+    private FirebaseFirestore mFirestore;
 
     // for logging
     private static final String TAG = "DoctorActivity";
@@ -110,18 +120,62 @@ public class DoctorActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        mFirestore = FirebaseFirestore.getInstance();
+        addPatient = findViewById(R.id.btn_add_patient);
+        addPatient.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                onAddPatient();
+            }
+        });
     }
 
     private void initRecyclerView() {
 
-        List<Patient> patientList = new ArrayList<>();
-        for (int i = 0; i < 12; i++){
-            int resourceId = R.mipmap.doctor;
-            // id, name, gender, severity, photo, age
-            patientList.add(new Patient(i, "003 Yefren Lee", "Female", "serious", resourceId, 40));
-        }
+        // debug
+        final List<Patient> patientList = new ArrayList<>();
+        mFirestore.collection("patients").get().addOnSuccessListener(
+                new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                        for(QueryDocumentSnapshot snap: documentSnapshots){
+                            patientList.add(snap.toObject(Patient.class));
+                        }
+                    }
+                }
+        );
+
+//        for (int i = 0; i < 12; i++){
+//            int resourceId = R.mipmap.doctor;
+//            // id, name, gender, severity, photo, age
+//            patientList.add(new Patient(i, "003 Yefren Lee", "Female", "serious", resourceId, 40));
+//        }
 
         mAdapter = new DoctorAdapter(patientList);
         mPatientsRecycler.setAdapter(mAdapter);
+    }
+
+    private void onAddPatient(){
+        final CollectionReference patients = mFirestore.collection("patients");
+        // TODO: should be transaction
+        patients.orderBy("id", Query.Direction.DESCENDING).limit(1).get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                        if(documentSnapshots.size() == 0){
+                            Patient p = new Patient(1, "Alice", "female", Severity.MILD, R.mipmap.doctor, 23);
+                            Log.i(TAG, "====== add " + p.getName() + " ======" );
+                            patients.document(Integer.toString(p.getID())).set(p);
+                        }
+                        else for(QueryDocumentSnapshot snap: documentSnapshots){
+                            int m = Integer.valueOf(snap.getData().get("id").toString());
+                            Patient p = new Patient(m+1, "Alice", "female", Severity.SEVERE, R.mipmap.doctor, 23);
+                            Log.i(TAG, "====== add " + p.getName() + " ======" );
+                            patients.document(Integer.toString(p.getID())).set(p);
+                        }
+                    }
+                });
+
     }
 }

@@ -12,7 +12,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.gonine.R;
+import com.example.gonine.bean.Utils;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 
 public class PatientSpeechActivity extends AppCompatActivity {
     // TODO: add lineChart View
@@ -23,6 +25,9 @@ public class PatientSpeechActivity extends AppCompatActivity {
 
     // for firebase auth
     FirebaseAuth auth;
+
+    // TODO: 通过Intent传入patientId来初始化patientRef
+    private DocumentReference patientRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -35,6 +40,7 @@ public class PatientSpeechActivity extends AppCompatActivity {
 
         init();
     }
+
 
     //获取界面控件
     private void init() {

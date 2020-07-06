@@ -3,12 +3,14 @@ package com.example.gonine;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.gonine.activity.DoctorActivity;
 import com.example.gonine.activity.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -41,8 +43,16 @@ public class MainActivity extends AppCompatActivity {
         tv_back=findViewById(R.id.tv_back);
         btn_login=findViewById(R.id.btn_login);
 
-        if(FirebaseAuth.getInstance().getCurrentUser() == null){
-            // TODO: just go to content
+        if(FirebaseAuth.getInstance().getCurrentUser() != null){
+            Intent data=new Intent();
+            //datad.putExtra( ); name , value ;
+            data.putExtra("isLogin",true);
+            data.putExtra("userName", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+            Log.i("display name", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+            //RESULT_OK为Activity系统常量，状态码为-1
+            // 表示此页面下的内容操作成功将data返回到上一页面，如果是用back返回过去的则不存在用setResult传递data值
+            setResult(RESULT_OK, data);
+            startActivity(new Intent(MainActivity.this, DoctorActivity.class));
         }
 
         btn_login.setOnClickListener(new View.OnClickListener() {
