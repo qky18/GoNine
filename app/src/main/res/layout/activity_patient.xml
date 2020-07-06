@@ -265,36 +265,81 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="wrap_content"
                 android:layout_height="360dp"
-                android:layout_gravity="center_horizontal"
                 android:layout_below="@+id/patient_data"
-                android:layout_marginTop="30dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="40dp"
                 android:layout_marginRight="40dp"
-                app:contentPadding="10dp"
+                android:layout_marginTop="15dp"
+                app:cardCornerRadius="15dp"
                 app:cardElevation="3dp"
-                app:cardCornerRadius="15dp">
+                app:contentPadding="10dp">
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
                     <!-- 心电波形 -->
                     <TextView
-                        android:id="@+id/heart_text"
+                        android:id="@+id/heartwave1_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="心电波形"
-                        android:textSize="25sp"/>
+                        android:textSize="25sp" />
                     <!-- TODO: LineChart Area -->
+                    <lecho.lib.hellocharts.view.LineChartView
+                        android:id="@+id/heartwave1_chart"
+                        android:layout_width="match_parent"
+                        android:layout_height="100sp"
+                        android:layout_marginTop="35dp"/>
+<!--
+                    <TextView
+                        android:id="@+id/heartwave2_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="85dp"
+                        android:text="心电级联波形"
+                        android:textSize="15sp" />
 
-
+                    <lecho.lib.hellocharts.view.LineChartView
+                        android:id="@+id/heartwave2_chart"
+                        android:layout_width="match_parent"
+                        android:layout_height="60sp"
+                        android:layout_marginTop="110dp"
+                        />
+                        -->
                     <!-- 呼吸波形 -->
                     <!-- TODO: below_id change to LineChart name -->
-                    <TextView
+
+
+                                      <TextView
                         android:id="@+id/breathe_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/heart_text"
+                        android:layout_marginTop="170dp"
                         android:text="呼吸波形"
-                        android:textSize="25sp"/>
+                        android:textSize="25sp" />
+
+                    <lecho.lib.hellocharts.view.LineChartView
+                        android:id="@+id/breath_chart"
+                        android:layout_width="match_parent"
+                        android:layout_height="100sp"
+                        android:layout_marginTop="205dp"
+                        />
+<!--
+                    <TextView
+                        android:id="@+id/blood_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="255dp"
+                        android:text="呼吸波形"
+                        android:textSize="15sp" />
+
+                    <lecho.lib.hellocharts.view.LineChartView
+                        android:id="@+id/blood_chart"
+                        android:layout_width="match_parent"
+                        android:layout_height="60sp"
+                        android:layout_marginTop="280dp"
+                        />
+-->
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
         </RelativeLayout>

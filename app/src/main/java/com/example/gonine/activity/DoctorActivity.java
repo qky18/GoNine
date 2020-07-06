@@ -1,12 +1,11 @@
 package com.example.gonine.activity;
 
-import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,15 +15,35 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gonine.R;
+import com.example.gonine.adapter.DoctorAdapter;
+import com.example.gonine.bean.Patient;
+import com.example.gonine.bean.Severity;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DoctorActivity extends AppCompatActivity {
+    // toolbar
     private Toolbar mToolbar;
     private SearchView mSearchView;
-    private RecyclerView mRecyclerView;
+
+    // recycler view for patients
+    private RecyclerView mPatientsRecycler;
+    private DoctorAdapter mAdapter;
+
+    // buttons
+    private ImageButton addPatient;
 
     // for firebase auth
     FirebaseAuth auth;
+    private FirebaseFirestore mFirestore;
 
     // for logging
     private static final String TAG = "DoctorActivity";
@@ -39,6 +58,7 @@ public class DoctorActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         init();
+        initRecyclerView();
     }
 
 
@@ -47,7 +67,7 @@ public class DoctorActivity extends AppCompatActivity {
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar); //使活动支持ToolBar
         mSearchView = findViewById(R.id.search_view);
-        mRecyclerView = findViewById(R.id.recycler_patients);
+        mPatientsRecycler = findViewById(R.id.recycler_patients);
         /*------------------ SearchView有三种默认展开搜索框的设置方式，区别如下： ------------------*/
         //设置搜索框直接展开显示。左侧有放大镜(在搜索框中) 右侧有叉叉 可以关闭搜索框
         mSearchView.setIconified(false);
@@ -100,6 +120,62 @@ public class DoctorActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        mFirestore = FirebaseFirestore.getInstance();
+        addPatient = findViewById(R.id.btn_add_patient);
+        addPatient.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                onAddPatient();
+            }
+        });
     }
 
+    private void initRecyclerView() {
+
+        // debug
+        final List<Patient> patientList = new ArrayList<>();
+        mFirestore.collection("patients").get().addOnSuccessListener(
+                new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                        for(QueryDocumentSnapshot snap: documentSnapshots){
+                            patientList.add(snap.toObject(Patient.class));
+                        }
+                    }
+                }
+        );
+
+//        for (int i = 0; i < 12; i++){
+//            int resourceId = R.mipmap.doctor;
+//            // id, name, gender, severity, photo, age
+//            patientList.add(new Patient(i, "003 Yefren Lee", "Female", "serious", resourceId, 40));
+//        }
+
+        mAdapter = new DoctorAdapter(patientList);
+        mPatientsRecycler.setAdapter(mAdapter);
+    }
+
+    private void onAddPatient(){
+        final CollectionReference patients = mFirestore.collection("patients");
+        // TODO: should be transaction
+        patients.orderBy("id", Query.Direction.DESCENDING).limit(1).get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                        if(documentSnapshots.size() == 0){
+                            Patient p = new Patient(1, "Alice", "female", Severity.MILD, R.mipmap.doctor, 23);
+                            Log.i(TAG, "====== add " + p.getName() + " ======" );
+                            patients.document(Integer.toString(p.getID())).set(p);
+                        }
+                        else for(QueryDocumentSnapshot snap: documentSnapshots){
+                            int m = Integer.valueOf(snap.getData().get("id").toString());
+                            Patient p = new Patient(m+1, "Alice", "female", Severity.SEVERE, R.mipmap.doctor, 23);
+                            Log.i(TAG, "====== add " + p.getName() + " ======" );
+                            patients.document(Integer.toString(p.getID())).set(p);
+                        }
+                    }
+                });
+
+    }
 }
