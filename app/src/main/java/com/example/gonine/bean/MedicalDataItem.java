@@ -2,17 +2,12 @@ package com.example.gonine.bean;
 
 import android.graphics.Color;
 import android.util.Pair;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.example.gonine.R;
 import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Timer;
 import java.util.Vector;
 
 import lecho.lib.hellocharts.gesture.ContainerScrollType;
@@ -20,7 +15,6 @@ import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.model.LineChartData;
 import lecho.lib.hellocharts.model.PointValue;
-import lecho.lib.hellocharts.model.ValueShape;
 import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
 
@@ -29,10 +23,8 @@ public class MedicalDataItem {
     private Vector<Pair<Timestamp,Float>> data ;
     //classes for chart
     private LineChartData lineChartData;//工具人，可能打包
-   // private LineChartView lineChartView;//工具人，可能打包
     private List<Line> linesList;//线的集合，打包
     private List<PointValue> pointValueList;//点的集合
-    //  private List<PointValue> points;//感觉没啥用
     private int position = 0;
 
     //  private boolean isFinish = true;
@@ -149,14 +141,6 @@ public class MedicalDataItem {
         lineChartView.setLineChartData(lineChartData);
         //根据点的横坐实时变幻坐标的视图范围
         Viewport port = initViewPort(0,50);//根据数据具体调整，比如可以多设置一些点然后左右拖动查看
-        /*
-        Viewport port;
-        if (x > 50) {
-            port = initViewPort(x - 50, x);
-        } else {
-            port = initViewPort(0, 50);
-        }
-        */
 
         lineChartView.setCurrentViewport(port);//当前窗口
 

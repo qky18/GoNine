@@ -1,11 +1,11 @@
 package com.example.gonine.bean;
 
 
+import com.google.firebase.firestore.IgnoreExtraProperties;
+
 import java.util.Vector;
 
 import lecho.lib.hellocharts.view.LineChartView;
-
-import com.google.firebase.firestore.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
 public class Patient {
@@ -52,11 +52,11 @@ public class Patient {
         return photoID;
     }
 
-    public Vector<DoctorAdvice> getDoctor_advices() {
+    public Vector<DoctorAdvice> getDoctorAdvices() {
         return advices;
     }
 
-    public Vector<MedicalDataItem> getMedical_data() {
+    public Vector<MedicalDataItem> getMedicalData() {
         return data;
     }
 
@@ -96,34 +96,34 @@ public class Patient {
         this.age = age;
     }
 
-    public void add_advices(DoctorAdvice da){
+    public void addAdvices(DoctorAdvice da){
         this.advices.add(da) ;
     }
 
-    public void add_advices(int index,DoctorAdvice da){
+    public void addAdvices(int index,DoctorAdvice da){
         this.advices.add(index,da) ;
     }
 
-    public void remove_advices(int index){
+    public void removeAdvices(int index){
         this.advices.remove(index) ;
     }
 
-    public void clear_advices(){
+    public void clearAdvices(){
         this.advices.clear() ;
     }
 
-    public void add_data(MedicalDataItem m){
+    public void addData(MedicalDataItem m){
         this.data.add(m) ;
     }
 
-    public void add_data(int index, MedicalDataItem m){
+    public void addData(int index, MedicalDataItem m){
         this.data.add(index,m) ;
     }
 
-    public void remove_data(int index){
+    public void removeData(int index){
         this.data.remove(index) ;
     }
-    public void clear_data(){
+    public void clearData(){
         this.data.clear() ;
     }
 
@@ -137,7 +137,7 @@ public class Patient {
 
 
 
-    public void chartinit_all(LineChartView lcv_heart,LineChartView lcv_heart2,LineChartView lcv_breath, LineChartView lcv_blood){//display自带更新
+    public void initChartAll(LineChartView lcv_heart,LineChartView lcv_heart2,LineChartView lcv_breath, LineChartView lcv_blood){ //display自带更新
         for(int i = 0; i < data.size(); i++){
             MedicalDataItem temp = (MedicalDataItem)data.toArray()[i] ;
             if(temp.getName() == "heartwave1" ){
@@ -156,9 +156,12 @@ public class Patient {
         }
     }
 
-    public void display_all(LineChartView lcv_heart,LineChartView lcv_heart2,LineChartView lcv_breath, LineChartView lcv_blood){//display自带更新
+    public void displayAll(LineChartView lcv_heart,LineChartView lcv_heart2,LineChartView lcv_breath, LineChartView lcv_blood){//display自带更新
+        if(data == null){
+            return;
+        }
         for(int i = 0; i < data.size(); i++){
-            MedicalDataItem temp = (MedicalDataItem)data.toArray()[i] ;
+            MedicalDataItem temp = (MedicalDataItem) data.toArray()[i] ;
             if(temp.getName() == "heartwave1" ){
                 temp.display(lcv_heart);
             }
@@ -171,7 +174,6 @@ public class Patient {
             else if(temp.getName() == "blood"){
                 temp.display(lcv_blood);
             }
-            else continue ;
         }
     }
 }
