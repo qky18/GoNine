@@ -37,8 +37,6 @@ import com.google.firebase.firestore.Query;
  */
 public class DoctorAdapter extends FirestoreAdapter<DoctorAdapter.ViewHolder> {
 
-    //private List<Patient> patientList;
-
     public interface OnPatientSelectedListener {
         void onPatientSelected(DocumentSnapshot patient);
     }

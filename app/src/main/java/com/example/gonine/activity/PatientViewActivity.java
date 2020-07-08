@@ -13,10 +13,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.gonine.R;
+import com.example.gonine.bean.DigitalItem;
 import com.example.gonine.bean.MedicalDataItem;
+import com.example.gonine.bean.NoteItem;
 import com.example.gonine.bean.Patient;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -28,7 +31,7 @@ import java.util.Vector;
 import lecho.lib.hellocharts.view.LineChartView;
 
 public class PatientViewActivity extends AppCompatActivity {
-    // TODO: add lineChart View
+
     // for chart
     private LineChartView lcv_heartwave1;
     private LineChartView lcv_heartwave2;
@@ -36,7 +39,6 @@ public class PatientViewActivity extends AppCompatActivity {
     private LineChartView lcv_blood;
     private Timer timer;
 
-    // TODO: 通过Intent传入patientId来初始化patientRef
     // for firestore
     public static final String KEY_PATIENT_ID = "key_patient_id";
     private FirebaseFirestore mFirestore;
@@ -44,7 +46,6 @@ public class PatientViewActivity extends AppCompatActivity {
     // for firebase auth
     FirebaseAuth auth;
 
-    // TODO: 使用patientRef来获得patient
     private Patient p;
 
     // bind widgets
@@ -67,8 +68,8 @@ public class PatientViewActivity extends AppCompatActivity {
         //设置此界面为横屏
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        initFirestore();
         initView();
+        initFirestore();
     }
 
     private void initFirestore() {
@@ -90,6 +91,7 @@ public class PatientViewActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 p = documentSnapshot.toObject(Patient.class);
+                //CollectionReference docRef = patientRef.collection("doctor_advices");
                 initPatient();
                 Log.i("patient object", p.getName());
             }
@@ -116,7 +118,9 @@ public class PatientViewActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(PatientViewActivity.this, PatientSpeechActivity.class);
-                startActivityForResult(intent, 1);
+                intent.putExtra(PatientSpeechActivity.KEY_PATIENT_ID, PatientViewActivity.KEY_PATIENT_ID);
+
+                startActivity(intent);
             }
         });
 
@@ -139,13 +143,14 @@ public class PatientViewActivity extends AppCompatActivity {
         }
 
         // set patient info
-        //name.setText(p.getName());
-        //age.setText(p.getAge());
-        //gender.setText(p.getGender());
-        // ...
+        Log.i("initPatient", p.getName());
+        name.setText(p.getName());
+        age.setText(String.valueOf(p.getAge()));
+        gender.setText(p.getGender());
         patient_situ.setText("入院时间：2020年1月21日\n过往病史：糖尿病\n过敏史：N/A");
 
-        // init patient
+
+        // init graph
         Vector em = new Vector() ;
         MedicalDataItem heartwave1 = new MedicalDataItem("heartwave1",em) ;
         Vector<MedicalDataItem> use = new Vector<MedicalDataItem>() ;
@@ -156,7 +161,7 @@ public class PatientViewActivity extends AppCompatActivity {
         p.setAdvices(null);
         p.setData(use);
 
-        //TODO: add line chart binding & setting
+        // add line chart binding & setting
         Vector data = new Vector() ;
         medicalDataItem = new MedicalDataItem("breathe", data) ;
 
@@ -164,19 +169,20 @@ public class PatientViewActivity extends AppCompatActivity {
         lcv_breath = (LineChartView) findViewById(R.id.breath_chart);
         p.initChartAll(lcv_heartwave1,lcv_heartwave2,lcv_breath,lcv_blood);
 
-        timer = new Timer();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         if(timer == null){
-            Log.i("PatientView", "timer not ready");
-            return;
+            timer = new Timer();
         }
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
+                if(p == null){
+                    return;
+                }
                 //实时添加新的点
                 p.displayAll(lcv_heartwave1,lcv_heartwave2,lcv_breath,lcv_blood) ;
             }

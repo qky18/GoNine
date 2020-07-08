@@ -1,6 +1,7 @@
 package com.example.gonine.bean;
 
 import android.graphics.Color;
+import android.util.Log;
 import android.util.Pair;
 
 import com.google.firebase.Timestamp;
@@ -125,12 +126,7 @@ public class MedicalDataItem {
             PointValue value = new PointValue(i*50/(data.size()-1),tmp.second);
             pointValueList.add(value) ;
         }
-        /*
-        PointValue value1 = new PointValue(position * 5, random.nextInt(100) + 40);
-        value1.setLabel("00:00");
-        pointValueList.add(value1);
-*/
-        //float x = value1.getX();
+
         //根据新的点的集合画出新的线
         Line line = new Line(pointValueList);
         setline(line) ;
@@ -143,11 +139,8 @@ public class MedicalDataItem {
         Viewport port = initViewPort(0,50);//根据数据具体调整，比如可以多设置一些点然后左右拖动查看
 
         lineChartView.setCurrentViewport(port);//当前窗口
-
-        //Viewport maPort = initMaxViewPort(x);
         lineChartView.setMaximumViewport(port);//最大窗口
 
-        //position++;
     }
     private LineChartData initDatas(List<Line> lines) {
         LineChartData data = new LineChartData(lines);
@@ -164,24 +157,24 @@ public class MedicalDataItem {
         port.right = right;
         return port;
     }
+
     private void setline(Line line){
         if(name == "heartwave1" || name == "heartwave2"){//对应图上的心电波形和心电级联波形
             line.setColor(Color.RED);
             line.setHasPoints(false);//是否显示圆点 ，如果为false则没有原点只有点显示（每个数据点都是个大圆点）
-            //line.setShape(ValueShape.CIRCLE);
             line.setCubic(false);//曲线是否平滑，即是曲线还是折线
             line.setHasLabelsOnlyForSelected(true);//点击数据坐标提示数据,设置了line.setHasLabels(true);之后点击无效
         }
         else if(name == "breathe" || name == "blood"){//对应呼吸与血氧容积
             line.setColor(Color.BLUE);
             line.setHasPoints(true);//是否显示圆点 ，如果为false则没有原点只有点显示（每个数据点都是个大圆点）
-            //line.setShape(ValueShape.CIRCLE);
             line.setCubic(true);//曲线是否平滑，即是曲线还是折线
             line.setHasLabelsOnlyForSelected(true);//点击数据坐标提示数据,设置了line.setHasLabels(true);之后点击无效
             line.setFilled(true) ;
         }
         else{
             //报错
+            Log.e("medicalData", "error");
         }
     }
 }

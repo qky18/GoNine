@@ -138,7 +138,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void updateUI(FirebaseUser user) {
-        // TODO: show corresponding UI for user
         if(user != null){
             Intent data=new Intent();
             //datad.putExtra( ); name , value ;

@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,9 +29,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DoctorActivity extends AppCompatActivity implements
         DoctorAdapter.OnPatientSelectedListener {
@@ -131,14 +127,14 @@ public class DoctorActivity extends AppCompatActivity implements
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                //TODO: submit query text & go to next page
+                // TODO: submit query text & go to next page
                 Log.e("Debug", "TextSubmit : " + s);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                //TODO: show search hint
+                // TODO: show search hint
                 Log.e("Debug", "TextChange --> " + s);
                 return false;
             }

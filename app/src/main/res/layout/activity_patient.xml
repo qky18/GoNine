@@ -284,13 +284,13 @@
                         android:layout_height="wrap_content"
                         android:text="心电波形"
                         android:textSize="25sp" />
-                    <!-- TODO: LineChart Area -->
+                    <!-- LineChart Area -->
                     <lecho.lib.hellocharts.view.LineChartView
                         android:id="@+id/heartwave1_chart"
                         android:layout_width="match_parent"
                         android:layout_height="100sp"
                         android:layout_marginTop="35dp"/>
-<!--
+                    <!-- chose not to add these components
                     <TextView
                         android:id="@+id/heartwave2_text"
                         android:layout_width="match_parent"
@@ -305,12 +305,10 @@
                         android:layout_height="60sp"
                         android:layout_marginTop="110dp"
                         />
-                        -->
+                    -->
                     <!-- 呼吸波形 -->
-                    <!-- TODO: below_id change to LineChart name -->
-
-
-                                      <TextView
+                    <!--  below_id change to LineChart name -->
+                    <TextView
                         android:id="@+id/breathe_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
