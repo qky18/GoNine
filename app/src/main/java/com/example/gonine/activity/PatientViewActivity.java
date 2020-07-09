@@ -43,6 +43,7 @@ public class PatientViewActivity extends AppCompatActivity {
     public static final String KEY_PATIENT_ID = "key_patient_id";
     private FirebaseFirestore mFirestore;
     private DocumentReference patientRef;
+    private String patientId;
     // for firebase auth
     FirebaseAuth auth;
 
@@ -77,7 +78,7 @@ public class PatientViewActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         // Get patient ID from extras
-        String patientId = getIntent().getExtras().getString(KEY_PATIENT_ID);
+        patientId = getIntent().getExtras().getString(KEY_PATIENT_ID);
         if (patientId == null) {
             throw new IllegalArgumentException("Must pass extra " + KEY_PATIENT_ID);
         }
@@ -118,7 +119,8 @@ public class PatientViewActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(PatientViewActivity.this, PatientSpeechActivity.class);
-                intent.putExtra(PatientSpeechActivity.KEY_PATIENT_ID, PatientViewActivity.KEY_PATIENT_ID);
+                intent.putExtra(PatientSpeechActivity.KEY_PATIENT_ID, patientId);
+                //intent.putExtra(PatientSpeechActivity.KEY_PATIENT_ID, PatientViewActivity.KEY_PATIENT_ID);
 
                 startActivity(intent);
             }

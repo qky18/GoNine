@@ -17,16 +17,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.gonine.R;
+import com.example.gonine.bean.DigitalItem;
 import com.example.gonine.bean.NoteItem;
 import com.example.gonine.bean.Patient;
 import com.example.gonine.bean.Utils;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 // speech to text使用
 
@@ -46,13 +50,15 @@ public class PatientSpeechActivity extends AppCompatActivity {
     private String diagnosis;           // 诊断结果
     private String advice;              // 医嘱
     private String basicInformation;    // 基本信息
-    private Utils utils;                // 向firestore发送信息
+    private Float temperature,blood_pressure,heart_rate,blood_oxygen,respiratory_rate;
+    private Utils utils_firestore;                // 向firestore发送信息
 
     // for firestore
     public static final String KEY_PATIENT_ID = "key_patient_id";
     private FirebaseFirestore mFirestore;
     private DocumentReference patientRef;
     private Patient p;
+    private String user_name;
 
     // for firebase auth
     FirebaseAuth auth;
@@ -66,9 +72,17 @@ public class PatientSpeechActivity extends AppCompatActivity {
 
         //设置此界面为横屏
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
         basicInformation = null;
+        temperature=0.0f;
+        blood_pressure=0.0f;
+        heart_rate=0.0f;
+        blood_oxygen=0.0f;
+        respiratory_rate=0.0f;
         diagnosis = null;
         advice = null;
+        utils_firestore=new Utils();
+        user_name=FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
 
         initView();
         initFirestore();
@@ -95,11 +109,9 @@ public class PatientSpeechActivity extends AppCompatActivity {
                 Log.e("patient speech", "init");
                 p = documentSnapshot.toObject(Patient.class);
                 assert p != null;
-                //TODO: crash if not commented
-                /*
                 Log.i("patient speech object", p.getName());
                 initPatient();
-                 */
+
             }
         });
     }
@@ -107,6 +119,7 @@ public class PatientSpeechActivity extends AppCompatActivity {
     //获取界面控件
     private void initView() {
         Log.e("PatientSpeech", "init");
+        Log.e("userName",user_name);
         pic = findViewById(R.id.patient_pic);
         name = findViewById(R.id.patient_name);
         gender = findViewById(R.id.patient_gender);
@@ -197,16 +210,49 @@ public class PatientSpeechActivity extends AppCompatActivity {
                     ArrayList<String> result=data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     speech_in.setText(result.get(0));
                     if(presentRadio.equals("诊断结果")){
-                        diagnosis=diagnosis+"/"+result.get(0);
+                        if(diagnosis!=null) {
+                            diagnosis = diagnosis + "/" + result.get(0);
+                        }
+                        else{
+                            diagnosis=result.get(0);
+                        }
                         speech_formatted.setText(diagnosis);
                     }
                     else if(presentRadio.equals("医嘱")){
-                        advice=advice+"/"+result.get(0);
+                        if(advice!=null) {
+                            advice = advice + "/" + result.get(0);
+                        }
+                        else{
+                            advice=result.get(0);
+                        }
                         speech_formatted.setText(advice);
                     }
                     else{
-                        basicInformation=basicInformation+"/"+result.get(0);
+                        String raw_data=result.get(0);
+                        //Log.e("substring",raw_data.substring(0,2));
+                        //Log.e("has data",String.valueOf(raw_data.contains("体温")));
+                        Pattern pattern=Pattern.compile("[^\\d+(\\.\\d+)?]");
+                        Matcher matcher=pattern.matcher(raw_data);
+                        String digital=matcher.replaceAll("");
+                        Log.e("digital",digital);
+                        if(raw_data.contains("体温")){ temperature=Float.parseFloat(digital); }
+                        else if(raw_data.contains("血压")){ blood_pressure=Float.parseFloat(digital); }
+                        else if(raw_data.contains("心率")){ heart_rate=Float.parseFloat(digital); }
+                        else if(raw_data.contains("血氧")){ blood_oxygen=Float.parseFloat(digital); }
+                        else if(raw_data.contains("呼吸率")){ respiratory_rate=Float.parseFloat(digital); }
+                        //转换成输出格式
+                        basicInformation="体温：";
+                        if(temperature!=0.0f){ basicInformation+=(String.valueOf(temperature)+"°C"); }
+                        basicInformation+="\n血压：";
+                        if(blood_pressure!=0.0f){ basicInformation+=String.valueOf(blood_pressure); }
+                        basicInformation+="\n心率：";
+                        if(heart_rate!=0.0f){ basicInformation+=String.valueOf(heart_rate); }
+                        basicInformation+="\n血氧：";
+                        if(blood_oxygen!=0.0f){ basicInformation+=(String.valueOf(blood_oxygen)+"%"); }
+                        basicInformation+="\n呼吸率：";
+                        if(respiratory_rate!=0.0f){ basicInformation+=String.valueOf(respiratory_rate); }
                         speech_formatted.setText(basicInformation);
+
                     }
                 }
                 break;
@@ -218,7 +264,6 @@ public class PatientSpeechActivity extends AppCompatActivity {
             return;
         }
 
-        // TODO: test if data successfully sent
         if(basicInformation != null){
             // TODO: convert speech text into number
             /*
@@ -227,22 +272,46 @@ public class PatientSpeechActivity extends AppCompatActivity {
             DigitalItem digit = new DigitalItem(null, null, val);
             utils.addDigital(patientRef, digit, type);
              */
-
+            if(temperature!=0.0f){
+                DigitalItem digit = new DigitalItem(Timestamp.now(), user_name, temperature);
+                utils_firestore.addDigital(patientRef, digit, "temperature");
+                temperature=0.0f;
+            }
+            if(blood_pressure!=0.0f){
+                DigitalItem digit = new DigitalItem(Timestamp.now(), user_name, blood_pressure);
+                utils_firestore.addDigital(patientRef, digit, "blood_pressure");
+                blood_pressure=0.0f;
+            }
+            if(heart_rate!=0.0f){
+                DigitalItem digit = new DigitalItem(Timestamp.now(), user_name, heart_rate);
+                utils_firestore.addDigital(patientRef, digit, "heart_rate");
+                heart_rate=0.0f;
+            }
+            if(blood_oxygen!=0.0f){
+                DigitalItem digit = new DigitalItem(Timestamp.now(), user_name, blood_oxygen);
+                utils_firestore.addDigital(patientRef, digit, "blood_oxygen");
+                blood_oxygen=0.0f;
+            }
+            if(respiratory_rate!=0.0f){
+                DigitalItem digit = new DigitalItem(Timestamp.now(), user_name, respiratory_rate);
+                utils_firestore.addDigital(patientRef, digit, "respiratory_rate");
+                respiratory_rate=0.0f;
+            }
             basicInformation = null;
         }
 
         if(advice != null){
-            // TODO: add firebase timestamp usage & doctor info
             //NoteItem note = new NoteItem(FieldValue.serverTimestamp(), null, advice);
-            NoteItem note = new NoteItem(null, null, advice);
-            utils.addDoctorAdvice(patientRef, note);
+            Log.e("convert","converting advice");
+            NoteItem note = new NoteItem(Timestamp.now(), user_name, advice);
+            utils_firestore.addDoctorAdvice(patientRef, note);
             advice = null;
         }
 
         if(diagnosis != null){
-            // TODO: add firebase timestamp usage & doctor info
-            NoteItem note = new NoteItem(null, null, advice);
-            utils.addDiagnosis(patientRef, note);
+            // TODO: 仿照advice
+            NoteItem note = new NoteItem(null, user_name, advice);
+            utils_firestore.addDiagnosis(patientRef, note);
             diagnosis = null;
         }
     }

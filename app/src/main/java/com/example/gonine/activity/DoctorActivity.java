@@ -47,6 +47,7 @@ public class DoctorActivity extends AppCompatActivity implements
     FirebaseAuth auth;
     private FirebaseFirestore mFirestore;
     private Query mQuery = null;
+    private String user_name;
 
     // for logging
     private static final String TAG = "DoctorActivity";
@@ -56,7 +57,7 @@ public class DoctorActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hospital);
         //设置此界面为横屏
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         initFirestore();
         initView();

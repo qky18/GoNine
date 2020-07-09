@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.gonine.activity.DoctorActivity;
 import com.example.gonine.activity.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,6 +46,13 @@ public class MainActivity extends AppCompatActivity {
         btn_login=findViewById(R.id.btn_login);
 
         if(FirebaseAuth.getInstance().getCurrentUser() != null){
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            String name = user.getEmail().substring(0, user.getEmail().indexOf('@'));
+            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                    .setDisplayName(name).build();
+            user.updateProfile(profileUpdates);
+            startActivity(new Intent(MainActivity.this, DoctorActivity.class));
+            /*
             Intent data=new Intent();
             //datad.putExtra( ); name , value ;
             data.putExtra("isLogin",true);
@@ -53,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
             // 表示此页面下的内容操作成功将data返回到上一页面，如果是用back返回过去的则不存在用setResult传递data值
             setResult(RESULT_OK, data);
             startActivity(new Intent(MainActivity.this, DoctorActivity.class));
+             */
         }
 
         btn_login.setOnClickListener(new View.OnClickListener() {
