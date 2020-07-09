@@ -3,6 +3,7 @@ package com.example.gonine.bean;
 
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
+import java.util.Collections;
 import java.util.Vector;
 
 import lecho.lib.hellocharts.view.LineChartView;
@@ -13,13 +14,13 @@ public class Patient {
     private String name ;
     private String gender ;
     private Severity severity ;
-    private int photoID  ;
-    private Vector<DoctorAdvice> advices ;
-    private Vector<MedicalDataItem> data ;
+    private int photoID ;
     private int age ;
 
-    private Vector<NoteItem> diagnosis;
-    private Vector<NoteItem> doctor_advices;
+
+    private Vector<NoteItem> diagnosis = null;
+    private Vector<NoteItem> advices = null;
+    private Vector<MedicalDataItem> data = null;
 
     public Patient(){}
 
@@ -52,12 +53,16 @@ public class Patient {
         return photoID;
     }
 
-    public Vector<DoctorAdvice> getDoctorAdvices() {
+    public Vector<MedicalDataItem> getMedicalData() {
+        return data;
+    }
+
+    public Vector<NoteItem> getAdvices() {
         return advices;
     }
 
-    public Vector<MedicalDataItem> getMedicalData() {
-        return data;
+    public Vector<NoteItem> getDiagnosis() {
+        return diagnosis;
     }
 
     public int getAge() {
@@ -84,10 +89,6 @@ public class Patient {
         this.photoID = photoResID;
     }
 
-    public void setAdvices(Vector<DoctorAdvice> advices) {
-        this.advices = advices;
-    }
-
     public void setData(Vector<MedicalDataItem> data) {
         this.data = data;
     }
@@ -96,12 +97,30 @@ public class Patient {
         this.age = age;
     }
 
-    public void addAdvices(DoctorAdvice da){
+    public void setAdvices(Vector<NoteItem> advices) {
+        this.advices = advices;
+        if(advices != null){
+            Collections.sort(this.advices);
+        }
+    }
+
+    public void setDiagnosis(Vector<NoteItem> diagnosis) {
+        this.diagnosis = diagnosis;
+        if(diagnosis != null) {
+            Collections.sort(this.diagnosis);
+        }
+    }
+
+    public void addAdvices(NoteItem da){
         this.advices.add(da) ;
     }
 
-    public void addAdvices(int index,DoctorAdvice da){
-        this.advices.add(index,da) ;
+    public void addAdvices(int index, NoteItem da){
+        this.advices.add(index, da) ;
+    }
+
+    public void addDiagnosis(NoteItem diag) {
+        this.diagnosis.add(diag);
     }
 
     public void removeAdvices(int index){

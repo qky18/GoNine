@@ -67,11 +67,6 @@ public class PatientSpeechActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speech_recognition);
-        //Intent intent=getIntent();
-        //p=(Patient)intent.getSerializableExtra("patient");
-
-        //设置此界面为横屏
-        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         basicInformation = null;
         temperature=0.0f;
@@ -106,12 +101,9 @@ public class PatientSpeechActivity extends AppCompatActivity {
         patientRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                Log.e("patient speech", "init");
                 p = documentSnapshot.toObject(Patient.class);
-                assert p != null;
                 Log.i("patient speech object", p.getName());
                 initPatient();
-
             }
         });
     }
@@ -265,13 +257,7 @@ public class PatientSpeechActivity extends AppCompatActivity {
         }
 
         if(basicInformation != null){
-            // TODO: convert speech text into number
-            /*
-            float val = 0.f;
-            String type = "temperature";
-            DigitalItem digit = new DigitalItem(null, null, val);
-            utils.addDigital(patientRef, digit, type);
-             */
+            // convert speech text into number
             if(temperature!=0.0f){
                 DigitalItem digit = new DigitalItem(Timestamp.now(), user_name, temperature);
                 utils_firestore.addDigital(patientRef, digit, "temperature");
@@ -301,7 +287,6 @@ public class PatientSpeechActivity extends AppCompatActivity {
         }
 
         if(advice != null){
-            //NoteItem note = new NoteItem(FieldValue.serverTimestamp(), null, advice);
             Log.e("convert","converting advice");
             NoteItem note = new NoteItem(Timestamp.now(), user_name, advice);
             utils_firestore.addDoctorAdvice(patientRef, note);
@@ -309,8 +294,7 @@ public class PatientSpeechActivity extends AppCompatActivity {
         }
 
         if(diagnosis != null){
-            // TODO: 仿照advice
-            NoteItem note = new NoteItem(null, user_name, advice);
+            NoteItem note = new NoteItem(Timestamp.now(), user_name, advice);
             utils_firestore.addDiagnosis(patientRef, note);
             diagnosis = null;
         }

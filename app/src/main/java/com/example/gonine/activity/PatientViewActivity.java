@@ -9,6 +9,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -17,12 +18,15 @@ import com.example.gonine.bean.DigitalItem;
 import com.example.gonine.bean.MedicalDataItem;
 import com.example.gonine.bean.NoteItem;
 import com.example.gonine.bean.Patient;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -92,7 +96,6 @@ public class PatientViewActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 p = documentSnapshot.toObject(Patient.class);
-                //CollectionReference docRef = patientRef.collection("doctor_advices");
                 initPatient();
                 Log.i("patient object", p.getName());
             }
@@ -120,8 +123,6 @@ public class PatientViewActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent=new Intent(PatientViewActivity.this, PatientSpeechActivity.class);
                 intent.putExtra(PatientSpeechActivity.KEY_PATIENT_ID, patientId);
-                //intent.putExtra(PatientSpeechActivity.KEY_PATIENT_ID, PatientViewActivity.KEY_PATIENT_ID);
-
                 startActivity(intent);
             }
         });
@@ -149,6 +150,18 @@ public class PatientViewActivity extends AppCompatActivity {
         name.setText(p.getName());
         age.setText(String.valueOf(p.getAge()));
         gender.setText(p.getGender());
+
+        // doctor advices & diagnosis
+        bindNoteItem("doctor_advices");
+        bindNoteItem("diagnosis");
+
+        // basic information (for each type)
+        bindDigitalItem("temperature");
+        bindDigitalItem("blood_pressure");
+        bindDigitalItem("heart_rate");
+        bindDigitalItem("blood_oxygen");
+        bindDigitalItem("respiratory_rate");
+
         patient_situ.setText("入院时间：2020年1月21日\n过往病史：糖尿病\n过敏史：N/A");
 
 
@@ -171,6 +184,71 @@ public class PatientViewActivity extends AppCompatActivity {
         lcv_breath = (LineChartView) findViewById(R.id.breath_chart);
         p.initChartAll(lcv_heartwave1,lcv_heartwave2,lcv_breath,lcv_blood);
 
+    }
+
+    private void bindDigitalItem(final String type) {
+        patientRef.collection(type).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    DigitalItem single = null;
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        single = document.toObject(DigitalItem.class);
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                    }
+                    if (single != null){
+                        switch (type){
+                            case "temperature": temperature.setText(String.valueOf(single.getValue()));
+                            case "blood_pressure": pressure.setText(String.valueOf(single.getValue()));
+                            case "heart_rate": heart_rate.setText(String.valueOf(single.getValue()));
+                            case "blood_oxygen": oxygen.setText(String.valueOf(single.getValue()));
+                            case "respiratory_rate": breathe_rate.setText(String.valueOf(single.getValue()));
+                        }
+                    }
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
+
+    private void bindNoteItem(final String type) {
+        patientRef.collection(type)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            Vector<NoteItem> advices = new Vector<NoteItem>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                NoteItem single_advice = document.toObject(NoteItem.class);
+                                advices.add(single_advice);
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                            }
+                            p.setAdvices(advices);
+                            Vector<NoteItem> notes = p.getAdvices();
+                            if(notes != null){
+                                String info = null;
+                                for(NoteItem item: notes){
+                                    if(info == null){
+                                        info = item.getDoctorUserName() + " (" + item.getTime() + "):\n" + item.getContent();
+                                    }
+                                    else{
+                                        info += "\n" + item.getDoctorUserName() + " (" + item.getTime() + "):\n" + item.getContent();
+                                    }
+                                }
+                                if(type.equals("doctor_advices")){
+                                    doctor_advice.setText(info);
+                                }
+                                else if(type.equals("diagnosis")){
+                                    symptom.setText(info);
+                                }
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
     }
 
     @Override
