@@ -4,13 +4,13 @@ import com.google.firebase.Timestamp;
 
 public class DigitalItem implements Comparable {
     private Timestamp time;//用的firebase时间戳
-    private String doctor_user_name ;
+    private String doctorUserName ;
     private float value;
 
     public DigitalItem(){}
     public DigitalItem(Timestamp _timestamp, String _doctor_user_name, float _value){
         this.time = _timestamp ;
-        this.doctor_user_name = _doctor_user_name;
+        this.doctorUserName = _doctor_user_name;
         this.value = _value;
     }
     public Timestamp getTime() {
@@ -18,7 +18,7 @@ public class DigitalItem implements Comparable {
     }
 
     public String getDoctorUserName() {
-        return this.doctor_user_name;
+        return this.doctorUserName;
     }
 
     public float getValue() {
@@ -30,7 +30,7 @@ public class DigitalItem implements Comparable {
     }
 
     public void setDoctor_id(String _doctor_user_name) {
-        this.doctor_user_name = _doctor_user_name;
+        this.doctorUserName = _doctor_user_name;
     }
 
     public void setValue(float value) {

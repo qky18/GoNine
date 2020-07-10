@@ -21,6 +21,7 @@ import com.example.gonine.bean.Patient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -147,12 +148,12 @@ public class PatientViewActivity extends AppCompatActivity {
 
         // set patient info
         Log.i("initPatient", p.getName());
-        name.setText(p.getName());
+        name.setText("【"+p.getID()+"】 "+p.getName());
         age.setText(String.valueOf(p.getAge()));
         gender.setText(p.getGender());
 
         // doctor advices & diagnosis
-        bindNoteItem("doctor_advices");
+        bindNoteItem("doctor_advice");
         bindNoteItem("diagnosis");
 
         // basic information (for each type)
@@ -187,6 +188,7 @@ public class PatientViewActivity extends AppCompatActivity {
     }
 
     private void bindDigitalItem(final String type) {
+        Log.e("bind DigitalItem","start");
         patientRef.collection(type).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -198,11 +200,11 @@ public class PatientViewActivity extends AppCompatActivity {
                     }
                     if (single != null){
                         switch (type){
-                            case "temperature": temperature.setText(String.valueOf(single.getValue()));
-                            case "blood_pressure": pressure.setText(String.valueOf(single.getValue()));
-                            case "heart_rate": heart_rate.setText(String.valueOf(single.getValue()));
-                            case "blood_oxygen": oxygen.setText(String.valueOf(single.getValue()));
-                            case "respiratory_rate": breathe_rate.setText(String.valueOf(single.getValue()));
+                            case "temperature": temperature.setText(String.valueOf(single.getValue()));break;
+                            case "blood_pressure": pressure.setText(String.valueOf(single.getValue()));break;
+                            case "heart_rate": heart_rate.setText(String.valueOf(single.getValue()));break;
+                            case "blood_oxygen": oxygen.setText(String.valueOf(single.getValue()));break;
+                            case "respiratory_rate": breathe_rate.setText(String.valueOf(single.getValue()));break;
                         }
                     }
                 } else {
@@ -213,31 +215,38 @@ public class PatientViewActivity extends AppCompatActivity {
     }
 
     private void bindNoteItem(final String type) {
-        patientRef.collection(type)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        Log.e("bind NoteItem","start");
+        patientRef.collection(type).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        Log.e("bind NoteItem","1");
                         if (task.isSuccessful()) {
+                            Log.e("bind NoteItem","2");
                             Vector<NoteItem> advices = new Vector<NoteItem>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
                                 NoteItem single_advice = document.toObject(NoteItem.class);
+                                //Log.e("advice/diagnosis",single_advice.getContent());
                                 advices.add(single_advice);
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                             }
+                            Log.e("bind NoteItem","3");
                             p.setAdvices(advices);
                             Vector<NoteItem> notes = p.getAdvices();
                             if(notes != null){
                                 String info = null;
                                 for(NoteItem item: notes){
+                                    if(item.getContent()==null){
+                                        continue;
+                                    }
                                     if(info == null){
-                                        info = item.getDoctorUserName() + " (" + item.getTime() + "):\n" + item.getContent();
+                                        info = item.getDoctorUserName() + " (" + item.getTime().toDate() + "):\n" + item.getContent();
                                     }
                                     else{
-                                        info += "\n" + item.getDoctorUserName() + " (" + item.getTime() + "):\n" + item.getContent();
+                                        info += "\n" + item.getDoctorUserName() + " (" + item.getTime().toDate() + "):\n" + item.getContent();
                                     }
                                 }
-                                if(type.equals("doctor_advices")){
+                                if(type.equals("doctor_advice")){
                                     doctor_advice.setText(info);
                                 }
                                 else if(type.equals("diagnosis")){

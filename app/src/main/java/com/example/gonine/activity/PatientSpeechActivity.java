@@ -294,7 +294,8 @@ public class PatientSpeechActivity extends AppCompatActivity {
         }
 
         if(diagnosis != null){
-            NoteItem note = new NoteItem(Timestamp.now(), user_name, advice);
+            Log.e("timestamp",String.valueOf(Timestamp.now()));
+            NoteItem note = new NoteItem(Timestamp.now(), user_name, diagnosis);
             utils_firestore.addDiagnosis(patientRef, note);
             diagnosis = null;
         }
