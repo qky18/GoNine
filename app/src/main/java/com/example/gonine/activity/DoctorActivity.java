@@ -1,5 +1,6 @@
 package com.example.gonine.activity;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -19,24 +20,25 @@ import com.example.gonine.adapter.DoctorAdapter;
 import com.example.gonine.bean.Patient;
 import com.example.gonine.bean.Severity;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class DoctorActivity extends AppCompatActivity {
+public class DoctorActivity extends AppCompatActivity implements
+        DoctorAdapter.OnPatientSelectedListener {
     // toolbar
     private Toolbar mToolbar;
     private SearchView mSearchView;
 
     // recycler view for patients
     private RecyclerView mPatientsRecycler;
-    private DoctorAdapter mAdapter;
+    private DoctorAdapter mAdapter = null;
 
     // buttons
     private ImageButton addPatient;
@@ -44,6 +46,8 @@ public class DoctorActivity extends AppCompatActivity {
     // for firebase auth
     FirebaseAuth auth;
     private FirebaseFirestore mFirestore;
+    private Query mQuery = null;
+    private String user_name;
 
     // for logging
     private static final String TAG = "DoctorActivity";
@@ -53,28 +57,44 @@ public class DoctorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hospital);
         //设置此界面为横屏
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        auth = FirebaseAuth.getInstance();
-
-        init();
+        initFirestore();
+        initView();
         initRecyclerView();
     }
 
+    @Override
+    public void onPatientSelected(DocumentSnapshot patient) {
+        // Go to the details page for the selected patient
+        Intent intent = new Intent(DoctorActivity.this, PatientViewActivity.class);
+        intent.putExtra(PatientViewActivity.KEY_PATIENT_ID, patient.getId());
+
+        startActivity(intent);
+    }
+
+    private void initFirestore() {
+        // init firestore
+        auth = FirebaseAuth.getInstance();
+        mFirestore = FirebaseFirestore.getInstance();
+        // Get patients
+        mQuery = mFirestore.collection("patients")
+                .orderBy("id", Query.Direction.DESCENDING);
+    }
 
     //获取界面控件
-    private void init() {
+    private void initView() {
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar); //使活动支持ToolBar
         mSearchView = findViewById(R.id.search_view);
         mPatientsRecycler = findViewById(R.id.recycler_patients);
         /*------------------ SearchView有三种默认展开搜索框的设置方式，区别如下： ------------------*/
         //设置搜索框直接展开显示。左侧有放大镜(在搜索框中) 右侧有叉叉 可以关闭搜索框
-        mSearchView.setIconified(false);
+        mSearchView.setIconified(true);
         //设置搜索框直接展开显示。左侧有放大镜(在搜索框外) 右侧无叉叉 有输入内容后有叉叉 不能关闭搜索框
         mSearchView.setIconifiedByDefault(false);
         //设置搜索框直接展开显示。左侧有无放大镜(在搜索框中) 右侧无叉叉 有输入内容后有叉叉 不能关闭搜索框
-        mSearchView.onActionViewExpanded();
+        //mSearchView.onActionViewExpanded();
 
         //设置字体颜色
         TextView textView = mSearchView.findViewById(androidx.appcompat.R.id.search_src_text);
@@ -108,20 +128,19 @@ public class DoctorActivity extends AppCompatActivity {
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                //TODO: submit query text & go to next page
+                // TODO: submit query text & go to next page
                 Log.e("Debug", "TextSubmit : " + s);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                //TODO: show search hint
+                // TODO: show search hint
                 Log.e("Debug", "TextChange --> " + s);
                 return false;
             }
         });
 
-        mFirestore = FirebaseFirestore.getInstance();
         addPatient = findViewById(R.id.btn_add_patient);
         addPatient.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -133,26 +152,30 @@ public class DoctorActivity extends AppCompatActivity {
 
     private void initRecyclerView() {
 
-        // debug
-        final List<Patient> patientList = new ArrayList<>();
-        mFirestore.collection("patients").get().addOnSuccessListener(
-                new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot documentSnapshots) {
-                        for(QueryDocumentSnapshot snap: documentSnapshots){
-                            patientList.add(snap.toObject(Patient.class));
-                        }
-                    }
+        if (mQuery == null) {
+            Log.w(TAG, "No query, not initializing RecyclerView");
+        }
+
+        mAdapter = new DoctorAdapter(mQuery, this) {
+
+            @Override
+            protected void onDataChanged() {
+                // Show/hide content if the query returns empty.
+                if (getItemCount() == 0) {
+                    mPatientsRecycler.setVisibility(View.GONE);
+                } else {
+                    mPatientsRecycler.setVisibility(View.VISIBLE);
                 }
-        );
+            }
 
-//        for (int i = 0; i < 12; i++){
-//            int resourceId = R.mipmap.doctor;
-//            // id, name, gender, severity, photo, age
-//            patientList.add(new Patient(i, "003 Yefren Lee", "Female", "serious", resourceId, 40));
-//        }
+            @Override
+            protected void onError(FirebaseFirestoreException e) {
+                // Show a snackbar on errors
+                Snackbar.make(findViewById(android.R.id.content),
+                        "Error: check logs for info.", Snackbar.LENGTH_LONG).show();
+            }
+        };
 
-        mAdapter = new DoctorAdapter(patientList);
         mPatientsRecycler.setAdapter(mAdapter);
     }
 
@@ -178,4 +201,29 @@ public class DoctorActivity extends AppCompatActivity {
                 });
 
     }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // TODO:Start sign in if necessary
+
+        // TODO: Apply filters
+
+        // Start listening for Firestore updates
+        if (mAdapter != null) {
+            mAdapter.startListening();
+        }
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAdapter != null) {
+            mAdapter.stopListening();
+        }
+    }
+
 }

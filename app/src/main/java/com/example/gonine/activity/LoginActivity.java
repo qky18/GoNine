@@ -128,6 +128,7 @@ public class LoginActivity extends AppCompatActivity {
             //是获取注册界面回传过来的用户名
             // getExtra().getString("***");
             String userName=data.getStringExtra("userName");
+            Log.i("display name", userName);
             if(!TextUtils.isEmpty(userName)){
                 //设置用户名到 et_user_name 控件
                 et_user_name.setText(userName);
@@ -138,7 +139,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void updateUI(FirebaseUser user) {
-        // TODO: show corresponding UI for user
         if(user != null){
             Intent data=new Intent();
             //datad.putExtra( ); name , value ;

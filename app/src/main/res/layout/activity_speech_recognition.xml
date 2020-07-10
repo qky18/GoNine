@@ -31,6 +31,7 @@
                 android:layout_width="250dp"
                 android:layout_height="120dp"/>
             <LinearLayout
+                android:id="@+id/fixed_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/patient_pic"
@@ -55,6 +56,50 @@
                     android:text="Age"
                     android:textSize="25sp"/>
             </LinearLayout>
+            <RadioGroup
+                android:id="@+id/radio_group"
+                android:layout_marginLeft="100dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/fixed_info"
+                android:layout_centerInParent="true"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:id="@+id/basic_information"
+                    android:layout_width="wrap_content"
+                    android:layout_height="100px"
+                    android:text="基本信息"
+                    android:textColor="@android:color/tertiary_text_dark"
+                    android:textSize="30sp"/>
+                <RadioButton
+                    android:id="@+id/diagnosis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="100px"
+                    android:textColor="@android:color/tertiary_text_dark"
+                    android:text="诊断结果"
+                    android:textSize="30sp"/>
+                <RadioButton
+                    android:id="@+id/future_order"
+                    android:layout_width="wrap_content"
+                    android:layout_height="100px"
+                    android:textColor="@android:color/tertiary_text_dark"
+                    android:text="医嘱"
+                    android:textSize="30sp"/>
+            </RadioGroup>
+            <Button
+                android:id="@+id/btn_submit"
+                android:layout_width="150dp"
+                android:layout_height="60dp"
+                android:layout_toRightOf="@id/radio_group"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="3dp"
+                android:layout_marginLeft="100dp"
+                android:layout_centerHorizontal="true"
+                android:background="#59BAB2"
+                android:text="提交"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"/>
         </RelativeLayout>
 
         <androidx.cardview.widget.CardView
@@ -100,7 +145,7 @@
                         android:layout_marginLeft="2dp"
                         android:scrollbars="vertical"
                         android:fadeScrollbars="true"
-                        android:text="复查核酸、查肺部CT、复查肾功能、 复查代谢平衡。\n\n使用无创呼吸机/打球蛋白。"
+                        android:text="体温是38.2"
                         android:textSize="30sp"/>
                 </LinearLayout>
 
@@ -124,7 +169,7 @@
                         android:layout_marginLeft="2dp"
                         android:scrollbars="vertical"
                         android:fadeScrollbars="true"
-                        android:text="医嘱：复查核酸、查肺部CT、复查肾功能、 复查代谢平衡。使用无创呼吸机/打球蛋白。\n\n其他信息：N/A"
+                        android:text="体温：38.2°C\n血压：\n心率：70\n血氧：94%\n呼吸率："
                         android:textSize="30sp"/>
                 </LinearLayout>
 

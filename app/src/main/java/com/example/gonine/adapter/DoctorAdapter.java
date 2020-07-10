@@ -15,6 +15,7 @@
  */
 package com.example.gonine.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,25 +29,23 @@ import com.bumptech.glide.Glide;
 import com.example.gonine.R;
 import com.example.gonine.bean.Patient;
 import com.google.firebase.firestore.DocumentSnapshot;
-
-import java.util.List;
+import com.google.firebase.firestore.Query;
 
 
 /**
  * RecyclerView adapter for a list of Patients.
  */
-public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder> {
+public class DoctorAdapter extends FirestoreAdapter<DoctorAdapter.ViewHolder> {
 
-    private List<Patient> patientList;
-
-    public DoctorAdapter(List<Patient> patientList) {
-        super();
-        this.patientList = patientList;
+    public interface OnPatientSelectedListener {
+        void onPatientSelected(DocumentSnapshot patient);
     }
 
-    @Override
-    public int getItemCount() {
-        return patientList.size();
+    private OnPatientSelectedListener mListener;
+
+    public DoctorAdapter(Query query, OnPatientSelectedListener listener) {
+        super(query);
+        mListener = listener;
     }
 
     @NonNull
@@ -56,15 +55,9 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
         return new ViewHolder(inflater.inflate(R.layout.item_patient, parent, false));
     }
 
-
     @Override
-    public void onBindViewHolder(ViewHolder patientViewHolder, int i) {
-        Patient patient = patientList.get(i);
-        patientViewHolder.nameView.setText(patient.getName());
-        // Load image via Glide lib
-        Glide.with(patientViewHolder.imageView.getContext())
-                .load(patient.getPhotoResID())
-                .into(patientViewHolder.imageView);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.bind(getSnapshot(position), mListener);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -79,9 +72,11 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
             nameView = itemView.findViewById(R.id.patient_item_name);
         }
 
-        public void bind(final DocumentSnapshot snapshot) {
+        public void bind(final DocumentSnapshot snapshot,
+                         final OnPatientSelectedListener listener) {
 
             Patient patient = snapshot.toObject(Patient.class);
+            Log.i("patient bind", patient.getName());
 
             // Load image via Glide lib
             Glide.with(imageView.getContext())
@@ -92,7 +87,6 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
             //TODO: find a representation of severity
             //categoryView.setText(patient.getSeverity());
 
-            /* TODO: parent selected listener
             // Click listener
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -102,7 +96,6 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
                     }
                 }
             });
-             */
         }
 
     }

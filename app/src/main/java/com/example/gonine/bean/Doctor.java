@@ -2,7 +2,7 @@ package com.example.gonine.bean;
 
 import java.util.Vector;
 
-public class Docter {
+public class Doctor {
     private int ID ;
     private String name ;
     private int age ;
@@ -11,7 +11,7 @@ public class Docter {
     private Vector<Integer> patients ;
     private Vector<DoctorAdvice> advices ;
 
-    public Docter(int i, String n, int a, Gender g, String p, Vector<Integer> ps, Vector<DoctorAdvice> as ){
+    public Doctor(int i, String n, int a, Gender g, String p, Vector<Integer> ps, Vector<DoctorAdvice> as ){
         this.ID = i ;
         this.name = n ;
         this.age = a ;

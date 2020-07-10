@@ -47,6 +47,9 @@ public class Utils {
     }
 
     public void addDoctorAdvice(DocumentReference patientRef, NoteItem item){
+        Log.e("util","addDoctorAdvice");
+        addNoteItem(patientRef, item, "doctor_advice");
+        /*会报错ClassCastException，this不能转化为java.util.concurrent.Executor
         addNoteItem(patientRef, item, "doctor_advice").addOnSuccessListener((Executor) this, new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -58,33 +61,14 @@ public class Utils {
                 Log.w("doctor_advice", "add doctor_advice failed.");
             }
         });
+        */
     }
 
     public void addDiagnosis(DocumentReference patientRef, NoteItem item){
-        addNoteItem(patientRef, item, "diagnosis").addOnSuccessListener((Executor) this, new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d("diagnosis", "diagnosis added.");
-            }
-        }).addOnFailureListener((Executor) this, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w("diagnosis", "add diagnosis failed.");
-            }
-        });
+        addNoteItem(patientRef, item, "diagnosis");
     }
 
     public void addDigital(DocumentReference patientRef, DigitalItem item, final String type){
-        addDigitalItem(patientRef, item, type).addOnSuccessListener((Executor) this, new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d(type, type + " added.");
-            }
-        }).addOnFailureListener((Executor) this, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w(type, "add " + type + " failed.");
-            }
-        });
+        addDigitalItem(patientRef, item, type);
     }
 }

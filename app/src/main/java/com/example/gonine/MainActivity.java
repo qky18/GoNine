@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
             user.updateProfile(profileUpdates);
 
             startActivity(new Intent(MainActivity.this, DoctorActivity.class));
+        
         }
 
         btn_login.setOnClickListener(new View.OnClickListener() {
