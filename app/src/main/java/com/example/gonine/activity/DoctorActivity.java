@@ -48,6 +48,7 @@ public class DoctorActivity extends AppCompatActivity implements
     private FirebaseFirestore mFirestore;
     private Query mQuery = null;
     private String user_name;
+    private int m;
 
     // for logging
     private static final String TAG = "DoctorActivity";
@@ -58,7 +59,7 @@ public class DoctorActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_hospital);
         //设置此界面为横屏
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
+        m=0;
         initFirestore();
         initView();
         initRecyclerView();
@@ -186,14 +187,25 @@ public class DoctorActivity extends AppCompatActivity implements
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot documentSnapshots) {
+                        String name="Alice";
+                        String gender="female";
+                        Severity sev=Severity.MILD;
+                        int photoID;
+                        int age=23;
+                        if(gender.equals("female")){
+                            photoID=R.drawable.patient1;
+                        }
+                        else{
+                            photoID=R.drawable.patient2;
+                        }
                         if(documentSnapshots.size() == 0){
-                            Patient p = new Patient(1, "Alice", "female", Severity.MILD, R.mipmap.doctor, 23);
+                            Patient p = new Patient(1, name, gender, sev, photoID, age);
                             Log.i(TAG, "====== add " + p.getName() + " ======" );
                             patients.document(Integer.toString(p.getID())).set(p);
                         }
                         else for(QueryDocumentSnapshot snap: documentSnapshots){
                             int m = Integer.valueOf(snap.getData().get("id").toString());
-                            Patient p = new Patient(m+1, "Alice", "female", Severity.SEVERE, R.mipmap.doctor, 23);
+                            Patient p = new Patient(m+1, name, gender, sev, photoID, age);
                             Log.i(TAG, "====== add " + p.getName() + " ======" );
                             patients.document(Integer.toString(p.getID())).set(p);
                         }

@@ -151,6 +151,13 @@ public class PatientViewActivity extends AppCompatActivity {
         name.setText("【"+p.getID()+"】 "+p.getName());
         age.setText(String.valueOf(p.getAge()));
         gender.setText(p.getGender());
+        if(p.getGender().equals("female")){
+            pic.setImageResource(R.drawable.patient1);
+        }
+        else{
+            pic.setImageResource(R.drawable.patient2);
+        }
+
 
         // doctor advices & diagnosis
         bindNoteItem("doctor_advice");
